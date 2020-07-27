@@ -3,7 +3,7 @@
   <head>
     <title>AngularJS + PHP | Add Remove Input Fields Dynamically</title>
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
-    <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.5.7/angular.min.js"></script>
+    <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.8.0/angular.min.js"></script>
   </head>
   <body>
     <h3 align="center">AngularJS + PHP - Add Remove Input Fields Dynamically</h3>
@@ -66,10 +66,22 @@
         $scope.error   = false;
 
         $scope.fetchData = function(){
-          $http.get('fetch_data.php').success(function(data){
-            $scope.namesData = data;
+          $http.get('fetch_data.php').then(function(result){
+            $scope.namesData = result.data;
           });
         };
+
+        // $scope.fetchData = function(){
+        //   $http({
+        //     method: 'GET',
+        //     url: 'fetch_data.php'
+        //   }).then(function(data){
+        //     console.log(data);
+        //     $scope.namesData = data.data;
+        //   });
+        // };
+
+        //console.log($scope.namesData);
 
         $scope.rows = [
           {
@@ -95,15 +107,11 @@
             method: "POST",
             url:    "insert.php",
             data:   $scope.formData
-          }).success(function(data){
-            if(data.error != '') {
-              $scope.success      = false;
-              $scope.error        = true;
-              $scope.errorMessage = data.error;
-            } else {
+          }).then(function successCallback(response){
+            console.log(response.data);
               $scope.success        = true;
               $scope.error          = false;
-              $scope.successMessage = data.message;
+              $scope.successMessage = response.data.message;
               $scope.formData       = {};
               $scope.rows = [
                 {
@@ -112,7 +120,11 @@
                 }
               ];
               $scope.fetchData();
-            }
+          },
+          function errorCallback(response) {
+            $scope.success      = false;
+            $scope.error        = true;
+            $scope.errorMessage = data.error;
           });
         };
 
